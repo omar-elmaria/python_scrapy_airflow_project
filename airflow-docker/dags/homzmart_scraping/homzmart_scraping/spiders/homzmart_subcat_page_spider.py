@@ -7,6 +7,10 @@ try:
 except FileNotFoundError:
     print("Airflow is being used. No need to add a new path to account for the host machine's environment")
 import os
+try:
+    os.chdir('/opt/airflow/data') # For Airflow - Changing the current working directory to the data folder so that the script stores the output JSON file there
+except FileNotFoundError:
+    os.chdir('/home/oelmaria/python_projects/python_scrapy_project/airflow-docker/data') # For local env - Changing the current working directory to the data folder so that the script stores the output JSON file there
 from dotenv import load_dotenv
 import scrapy
 from scrapy.crawler import CrawlerProcess

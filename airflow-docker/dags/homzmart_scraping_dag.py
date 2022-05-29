@@ -3,8 +3,7 @@ from airflow.models import DAG
 from datetime import datetime, date, timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.operators.bash import BashOperator
-from pyparsing import Combine
+from airflow.contrib.sensors.file_sensor import FileSensor
 import pendulum
 
 # Import the python scripts as classes and define methods out of these classes
@@ -46,9 +45,29 @@ home_page_task = PythonOperator(
     dag = dag
 )
 
+file_sensor_task_home_page = FileSensor(
+    task_id = 'file_sense_home_page',
+    fs_conn_id = 'json_files_directory', # Must be configured in the Airflow UI via Admin --> Connections
+    filepath = '/opt/airflow/data/Output_Home_Page.json',
+    mode = 'poke', # Keep checking until true or a timeout occurs
+    poke_interval = 60, # Check for the existence of the JSON file every 60 seconds
+    timeout = 300, # Fail the task if the file does not exist after 5 minutes (i.e., 5 trials)
+    dag = dag
+)
+
 cat_page_task = PythonOperator(
     task_id = 'cat_page',
     python_callable = cat_page_spider,
+    dag = dag
+)
+
+file_sensor_task_cat_page = FileSensor(
+    task_id = 'file_sense_cat_page',
+    fs_conn_id = 'json_files_directory',
+    filepath = '/opt/airflow/data/Output_Cat_Page.json',
+    mode = 'poke',
+    poke_interval = 60,
+    timeout = 300, 
     dag = dag
 )
 
@@ -58,9 +77,29 @@ subcat_page_task = PythonOperator(
     dag = dag
 )
 
+file_sensor_task_subcat_page = FileSensor(
+    task_id = 'file_sense_subcat_page',
+    fs_conn_id = 'json_files_directory',
+    filepath = '/opt/airflow/data/Output_SubCat_Page.json',
+    mode = 'poke',
+    poke_interval = 60,
+    timeout = 300, 
+    dag = dag
+)
+
 prod_page_task = PythonOperator(
     task_id = 'prod_page',
     python_callable = prod_page_spider,
+    dag = dag
+)
+
+file_sensor_task_prod_page = FileSensor(
+    task_id = 'file_sense_prod_page',
+    fs_conn_id = 'json_files_directory',
+    filepath = '/opt/airflow/data/Output_Prod_Page.json',
+    mode = 'poke',
+    poke_interval = 60,
+    timeout = 300, 
     dag = dag
 )
 
@@ -88,4 +127,5 @@ send_email_task = EmailOperator(
 # )
 
 # Set the order of the tasks
-home_page_task >> cat_page_task >> subcat_page_task >> prod_page_task >> combine_jsons_task >> send_email_task
+home_page_task >> file_sensor_task_home_page >> cat_page_task >> file_sensor_task_cat_page >> subcat_page_task >> file_sensor_task_subcat_page
+file_sensor_task_subcat_page >> prod_page_task >> file_sensor_task_prod_page >> combine_jsons_task >> send_email_task # Completing the dependency definitions in a second line so that the first line doesn't become too long
