@@ -1,0 +1,7 @@
+1. DAGs cannot be run even if it gets imported correctly (module import errors) --> Place the scripts in the dags folder
+2. Script runs contrinuously without triggers --> Add .airflowignore in the dags folder
+3. Uploading to Airtable fails due to inconsistent data types in a column (originates from NULLs produced after LEFT JOINs) --> Use df.replace({np.nan, None})
+4. Email on success --> Configure the Email settings in the .yaml file using the blog posts in homzmart_scraping_dag.py and define a task using an Email Operator at the end of DAG
+4. Email on failure --> Configure the Email settings in the .yaml file using the blog posts in homzmart_scraping_dag.py and add 'email_on_failure = True' in the default_args dict
+5. Full automation --> Leave the docker containers up. That way, you don't need to move the script to Windows and use the Windows task scheduler to fire up the containers
+6. Communicating between scripts --> Set the current working directory to the directory where you want to store the JSON files using os.chdir(/path)
