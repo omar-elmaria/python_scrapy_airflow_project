@@ -1,0 +1,5 @@
+*.env
+.vscode/
+venv_homzmart_scraping/
+airflow/
+airflow-docker/logs/
