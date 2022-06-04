@@ -68,7 +68,7 @@ class CombineJsons():
 
     # Merge "df_home_cat_subcat" with the prod_page data frame to get the complete data set
     df_prod_page = df_prod_page.replace('NA', None, regex = True) # Converting all NAs to "None" so that we don't face problems with data type consistency
-    df_all = df_home_cat_subcat.merge(df_prod_page, left_on = 'prod_url', right_on = 'response_url', how = 'left', suffixes = ('_sub_cat', '_prod')) # LEFT JOIN as the right DF could be smaller due timeouts
+    df_all = df_home_cat_subcat.merge(df_prod_page, left_on = 'prod_url', right_on = 'response_url', how = 'inner', suffixes = ('_sub_cat', '_prod')) # LEFT JOIN as the right DF could be smaller due timeouts. INNER JOIN is another option when you don't want NULLs
 
     ##---------------------------------------------------------START OF LOADING DFs TO AIRTABLE---------------------------------------------------------##
 

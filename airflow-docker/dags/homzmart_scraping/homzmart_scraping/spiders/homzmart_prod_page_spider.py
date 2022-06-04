@@ -58,10 +58,10 @@ class ProdPageSpider(scrapy.Spider):
                 l.add_css('prod_disp_name', 'h3.name')
 
             # # Merchandising data
-            if l.add_css('main_img_link', 'div.zoomer-cont img::attr(src)') is None:
+            if l.add_css('main_img_link', 'img::attr(src)') is None:
                 l.add_value('main_img_link', 'NA')
             else:
-                l.add_css('main_img_link', 'div.zoomer-cont img::attr(src)') # Main image link
+                l.add_css('main_img_link', 'img::attr(src)') # Main image link
 
             if l.add_css('all_img_links', 'div.v-image__image.v-image__image--contain::attr(style)') is None:
                 l.add_value('all_img_links', 'NA')
